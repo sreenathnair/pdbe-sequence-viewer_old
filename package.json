@@ -1,0 +1,39 @@
+{
+  "name": "pdbe-sequence-viewer",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/pdbe-sequence-viewer",
+  "module": "src/index.js",
+  "jsnext:main": "src/index.js",
+  "scripts": {
+    "build": "rimraf ./dist && mkdirp ./dist && rollup -c",
+    "rollup-watch": "rollup -cw",
+    "browser-sync": "browser-sync start --server -f dist/**/*.*",
+    "serve": "npm run rollup-watch & npm run browser-sync"
+  },
+  "author": "Sreenath Nair",
+  "license": "MIT",
+  "devDependencies": {
+    "@webcomponents/webcomponentsjs": "^1.0.19",
+    "babel-cli": "^6.24.1",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-custom-element-classes": "^0.1.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "browser-sync": "^2.18.12",
+    "data-loader": "^0.3.0",
+    "mkdirp": "^0.5.1",
+    "protvista-feature-adapter": "^0.0.2",
+    "rimraf": "^2.6.1",
+    "rollup": "^0.49.3",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "uniprot-entry-data-adapter": "0.0.4",
+    "uniprot-entry-data-loader": "^0.1.0"
+  },
+  "dependencies": {
+    "d3": "^4.9.1",
+    "lodash-es": "^4.17.4"
+  }
+}
