@@ -13,8 +13,8 @@ class PDBeSequenceViewer extends HTMLElement {
   connectedCallback() {
 
     console.log('Loaded PDB sequence viewer');
-    console.log("Required components => " +this._components);
-    console.log("PDBID => " +this._pdbid);
+    console.log("Required components => " + this._components);
+    console.log("PDBID => " + this._pdbid);
 
     //reading configuration
     d3.json("pdbe-sequence-viewer/config/config.json", config => {
@@ -29,69 +29,124 @@ class PDBeSequenceViewer extends HTMLElement {
       ratioPromiseList.forEach(ratioPromise => {
 
         ratioPromise.then(function (ratioResult) {
-            
-            var bestEntry = ratioResult[compObj._pdbid][1][0];
-            compObj._bestChainId = bestEntry.chain_id;
-            compObj._bestStructAsymId = bestEntry.struct_asym_id;
-            compObj._pdbSequenceLength = bestEntry.number_residues;
-            compObj._displaystart = 1;
-            compObj._displayend = compObj._pdbSequenceLength;
 
-            compObj.paintBasicLayout(compObj);
+          var bestEntry = ratioResult[compObj._pdbid][1][0];
+          compObj._bestChainId = bestEntry.chain_id;
+          compObj._bestStructAsymId = bestEntry.struct_asym_id;
+          compObj._pdbSequenceLength = bestEntry.number_residues;
+          compObj._displaystart = 1;
+          compObj._displayend = compObj._pdbSequenceLength;
 
-            //console.log(config['component'])
+          compObj.paintBasicLayout(compObj);
 
-            // creating list of promises required for requested components
-            var promiseList = [];
-            var apiList = [];
+          //console.log(config['component'])
 
-            compObj._components.split(',').forEach(component => {
-              let tempList = config['service'][component];
-              apiList.push(tempList)
-            });
+          // creating list of promises required for requested components
+          var promiseList = [];
+          var apiList = [];
 
-            // flattening promise list
-            apiList = compObj.flattenArray(apiList);
+          compObj._components.split(',').forEach(component => {
+            let tempList = config['service'][component];
+            apiList.push(tempList)
+          });
 
-            // making a unique list
-            apiList = compObj.uniqueArray(apiList);
+          // flattening promise list
+          apiList = compObj.flattenArray(apiList);
 
-            console.log(apiList);
+          // making a unique list
+          apiList = compObj.uniqueArray(apiList);
 
-            promiseList = dataService.createPromise([compObj._pdbid], apiList, compObj._bestChainId, compObj._bestStructAsymId);
+          console.log(apiList);
 
-            dataService.combineData(promiseList, compObj._pdbid, apiList).then(function (combinedResult) {
+          promiseList = dataService.createPromise([compObj._pdbid], apiList, compObj._bestChainId, compObj._bestStructAsymId);
 
-              console.log(combinedResult)
+          dataService.combineData(promiseList, compObj._pdbid, apiList).then(function (combinedResult) {
 
-              // paint molecule component by default
-              if (combinedResult[compObj._pdbid]['entities']['resolve']) {
-                combinedResult[compObj._pdbid]['entities']['result'][compObj._pdbid].forEach(element => {
-                    
-                  if (element.entity_id && element.entity_id == 1) {
-                        compObj._pdbSequence = element.pdb_sequence;
-                        document.querySelector('#top-sequence').data = compObj._pdbSequence;
+            console.log(combinedResult)
 
-                        let moleculeData = [{
-                          accession: "molecule",
-                          start: 1,
-                          end: compObj._pdbSequence.length,
-                          color: config["color_code"]["molecule"]
-                      }];
+            // paint molecule component by default
+            if (combinedResult[compObj._pdbid]['entities']['resolve']) {
+              combinedResult[compObj._pdbid]['entities']['result'][compObj._pdbid].forEach(element => {
 
-                      document.querySelector('#molecule-track').data = moleculeData;
+                if (element.entity_id && element.entity_id == 1) {
+                  compObj._pdbSequence = element.sequence;
+                  document.querySelector('#top-sequence').data = compObj._pdbSequence;
 
-                      var residue = new Residue(1);
-                      console.log(residue.res_number);
+                  let moleculeData = [
+                    {
+                      accession: "molecule", locations: [{
+                        fragments: []
+                      }], color: config["color_code"]["molecule"]
+                    },
+                    {
+                      accession: "mutated", locations: [{
+                        fragments: []
+                      }], color: config["color_code"]["mutated"]
+                    },
+                    {
+                      accession: "modified", locations: [{
+                        fragments: []
+                      }] , color: config["color_code"]["modified"]
+                    }
+                  ];
+
+                  // populating molecule fragment
+                  for(let incr = compObj._displaystart; incr <= compObj._displayend; incr++) {
+                    var tempFragment = {
+                      start: incr,
+                      end: incr,
+                      toolTip: "Residue " +incr +" (" +compObj._pdbSequence.charAt(incr) +") <br>" +
+                        "<b>" +compObj._pdbid +"</b>"
+                    }
+                    moleculeData[0].locations[0].fragments.push(tempFragment)
+                  }
+                  
+                  // populating mutated residue fragment
+                  if(combinedResult[compObj._pdbid]["mutatedResidues"]["resolve"]) {
+                    combinedResult[compObj._pdbid]["mutatedResidues"]["result"][compObj._pdbid].forEach(mutatedElement => {
+                      
+                      if(mutatedElement.entity_id && mutatedElement.entity_id == 1 && mutatedElement.chain_id == compObj._bestChainId) {
+                        let tempFragment = {
+                          start: mutatedElement.residue_number,
+                          end: mutatedElement.residue_number,
+                          toolTip: mutatedElement.mutation_details.from +" --> " +mutatedElement.mutation_details.to +
+                          " (" +mutatedElement.mutation_details.type +")"
+                        }
+                        moleculeData[1].locations[0].fragments.push(tempFragment)
+                      }
+
+                    });
                   }
 
-                });
-              }
+                  // populating modified residue fragment
+                  if(combinedResult[compObj._pdbid]["modifiedResidues"]["resolve"]) {
+                    combinedResult[compObj._pdbid]["modifiedResidues"]["result"][compObj._pdbid].forEach(modifiedElement => {
+                      
+                      if(modifiedElement.entity_id && modifiedElement.entity_id == 1 && modifiedElement.chain_id == compObj._bestChainId) {
+                        let tempFragment = {
+                          start: modifiedElement.residue_number,
+                          end: modifiedElement.residue_number,
+                          toolTip: "Modified Residue: " +modifiedElement.chem_comp_id
+                        }
+                        moleculeData[2].locations[0].fragments.push(tempFragment)
+                      }
 
-            });
+                    });
+                  }
 
-          },
-          function(error) {
+                  document.querySelector('#molecule-track').data = moleculeData;
+
+                  
+                  
+                }
+
+              });
+            }
+
+          });
+
+        },
+          function (error) {
             console.log('Error loading API data');
             console.log(error);
             window.alert('Error downloading API data, please check the parameters');
@@ -101,6 +156,9 @@ class PDBeSequenceViewer extends HTMLElement {
 
     });
 
+
+    // delaying to get the components painted after API calls
+    setTimeout(this.bindEvents, 2000);
 
   }
 
@@ -116,52 +174,52 @@ class PDBeSequenceViewer extends HTMLElement {
   paintBasicLayout(compObj) {
 
     this.mainContent = d3.select(this)
-        .append('div')
-        .attr('class', 'main-content');
+      .append('div')
+      .attr('class', 'main-content');
 
-      this.navDiv = this.mainContent.append('div')
-        .attr('id', 'nav-div');
+    this.navDiv = this.mainContent.append('div')
+      .attr('id', 'nav-div');
 
-      this.navDiv.append('div')
-        .attr('class', 'left');
+    this.navDiv.append('div')
+      .attr('class', 'left');
 
-      this.navComponent = d3.select(document.createElement('protvista-navigation'));
-      this.navComponent.attr('class', 'right')
-        .attr('length', compObj._pdbSequenceLength)
-        .attr('displaystart', compObj._displaystart)
-        .attr('displayend', compObj._displayend)
-        .attr('highlightstart', '')
-        .attr('highlightend', '');
+    this.navComponent = d3.select(document.createElement('protvista-navigation'));
+    this.navComponent.attr('class', 'right')
+      .attr('length', compObj._pdbSequenceLength)
+      .attr('displaystart', compObj._displaystart)
+      .attr('displayend', compObj._displayend)
+      .attr('highlightstart', '')
+      .attr('highlightend', '');
 
-      this.navDiv.node().append(this.navComponent.node());
+    this.navDiv.node().append(this.navComponent.node());
 
 
-      this.topSeqDiv = this.mainContent.append('div')
-        .attr('id', 'top-seq-div');
+    this.topSeqDiv = this.mainContent.append('div')
+      .attr('id', 'top-seq-div');
 
-      this.topSeqDiv.append('div')
-        .attr('class', 'left');
+    this.topSeqDiv.append('div')
+      .attr('class', 'left');
 
-      this.topSeqDiv.append('protvista-sequence')
-        .attr('class', 'right')
-        .attr('id', 'top-sequence')
-        .attr('length', compObj._pdbSequenceLength)
-        .attr('displaystart', compObj._displaystart)
-        .attr('displayend', compObj._displayend);
+    this.topSeqDiv.append('protvista-sequence')
+      .attr('class', 'right')
+      .attr('id', 'top-sequence')
+      .attr('length', compObj._pdbSequenceLength)
+      .attr('displaystart', compObj._displaystart)
+      .attr('displayend', compObj._displayend);
 
-      this.moleculeDiv = this.mainContent.append('div')
-        .attr('id', 'molecule-div');
+    this.moleculeDiv = this.mainContent.append('div')
+      .attr('id', 'molecule-div');
 
-      this.moleculeDiv.append('div')
-        .attr('class', 'left')
-        .text('Molecule');
+    this.moleculeDiv.append('div')
+      .attr('class', 'left')
+      .text('Molecule');
 
-      this.moleculeDiv.append('protvista-track')
-        .attr('id', 'molecule-track')
-        .attr('class', 'right')
-        .attr('length', compObj._pdbSequenceLength)
-        .attr('displaystart', compObj._displaystart)
-        .attr('displayend', compObj._displayend);
+    this.moleculeDiv.append('protvista-track')
+      .attr('id', 'molecule-track')
+      .attr('class', 'right')
+      .attr('length', compObj._pdbSequenceLength)
+      .attr('displaystart', compObj._displaystart)
+      .attr('displayend', compObj._displayend);
 
   }
 
@@ -175,12 +233,32 @@ class PDBeSequenceViewer extends HTMLElement {
     return arrArg.reduce((a, b) => a.concat(b));
   }
 
+  // this function binds change events to all protvista components
+  bindEvents() {
+    let regEx = /^protvista/i;
+    var viewerComponents = Array.prototype.slice.call(document.querySelectorAll('*')).filter(function (el) {
+      return el.tagName.match(regEx);
+    });
+
+    viewerComponents.forEach(element => {
+
+      element.addEventListener("change", e => {
+
+        for (const ch of viewerComponents) {
+          ch.setAttribute(e.detail.type, e.detail.value);
+        }
+
+        for (let key in e.detail) {
+
+          for (const ch of viewerComponents) {
+            ch.setAttribute(key, e.detail[key]);
+          }
+
+        }
+      });
+    });
+  }
+
 }
 
 export default PDBeSequenceViewer;
-
-class Residue {
-  constructor(res_number) {
-    this.res_number = res_number;
-  }
-}
