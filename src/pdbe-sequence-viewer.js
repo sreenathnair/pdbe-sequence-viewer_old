@@ -44,10 +44,12 @@ class PDBeSequenceViewer extends HTMLElement {
           // creating list of promises required for requested components
           var promiseList = [];
           var apiList = [];
+          var componentHash = {};
 
           compObj._components.split(',').forEach(component => {
             let tempList = config['service'][component];
-            apiList.push(tempList)
+            apiList.push(tempList);
+            componentHash[component] = '';
           });
 
           // flattening promise list
@@ -98,7 +100,7 @@ class PDBeSequenceViewer extends HTMLElement {
                       toolTip: "Residue " +incr +" (" +compObj._pdbSequence.charAt(incr) +") <br>" +
                         "<b>" +compObj._pdbid +"</b>"
                     }
-                    moleculeData[0].locations[0].fragments.push(tempFragment)
+                    moleculeData[0].locations[0].fragments.push(tempFragment);
                   }
                   
                   // populating mutated residue fragment
@@ -110,9 +112,9 @@ class PDBeSequenceViewer extends HTMLElement {
                           start: mutatedElement.residue_number,
                           end: mutatedElement.residue_number,
                           toolTip: mutatedElement.mutation_details.from +" --> " +mutatedElement.mutation_details.to +
-                          " (" +mutatedElement.mutation_details.type +")"
+                            " (" +mutatedElement.mutation_details.type +")"
                         }
-                        moleculeData[1].locations[0].fragments.push(tempFragment)
+                        moleculeData[1].locations[0].fragments.push(tempFragment);
                       }
 
                     });
@@ -128,7 +130,7 @@ class PDBeSequenceViewer extends HTMLElement {
                           end: modifiedElement.residue_number,
                           toolTip: "Modified Residue: " +modifiedElement.chem_comp_id
                         }
-                        moleculeData[2].locations[0].fragments.push(tempFragment)
+                        moleculeData[2].locations[0].fragments.push(tempFragment);
                       }
 
                     });
@@ -136,8 +138,94 @@ class PDBeSequenceViewer extends HTMLElement {
 
                   document.querySelector('#molecule-track').data = moleculeData;
 
+                  // painting mapping components
                   
-                  
+                  if(combinedResult[compObj._pdbid]["mappings"]["resolve"]) {
+
+                    compObj.mappingsDiv = compObj.mainContent.append('div')
+                      .attr('id', 'mappings-div');
+                    
+                    compObj.mappingsDiv.append('div')
+                      .attr('class', 'left')
+                      .text('Mappings');
+                    
+                    compObj.mappingsDiv.append('protvista-track')
+                      .attr('id', 'mappings-summary-track')
+                      .attr('class', 'right')
+                      .attr('length', compObj._pdbSequenceLength)
+                      .attr('displaystart', compObj._displaystart)
+                      .attr('displayend', compObj._displayend);
+
+                    document.querySelector('#mappings-summary-track').data = moleculeData;
+                      
+                    let mappingsTrack = compObj.mappingsDiv.append('div')
+                      .attr('id', 'mappings-tracks');
+                    
+                    let mappingResults = combinedResult[compObj._pdbid]["mappings"]["result"][compObj._pdbid];
+                    let mappingsToProcess = [];
+
+                    Object.keys(mappingResults).forEach(key => {
+                      componentHash[key.toLowerCase()] != undefined ? mappingsToProcess.push(key):null;
+                    });
+
+                    console.log(mappingsToProcess)
+
+                    mappingsToProcess.forEach(mapping => {
+                      
+                      mappingsTrack.append('div')
+                        .attr('class', 'left category-header')
+                        .text(mapping);
+                      
+                      mappingsTrack.append('protvista-track')
+                        .attr('class', 'right')
+                        .attr('id', mapping +'-track')
+                        .attr('length', compObj._pdbSequenceLength)
+                        .attr('displaystart', compObj._displaystart)
+                        .attr('displayend', compObj._displayend);
+
+                      let mappingData = [
+                        {
+                          accession: mapping, locations: [{
+                            fragments: []
+                          }], color: config["color_code"][mapping.toLowerCase()]
+                        }];
+                      
+
+                      Object.keys(mappingResults[mapping]).forEach(result => {
+
+                        mappingResults[mapping][result]['mappings'].forEach(elementMapping => {
+                          
+
+                          for(let incr = elementMapping.start.residue_number; incr <= elementMapping.end.residue_number; incr++) {
+
+                            let uniprotTooltip = "";
+                            // add UniProt details to tool tip if applicable
+                            if(mapping === 'UniProt') {
+                              uniprotTooltip = "UniProt range: " +elementMapping.unp_start +" - " +elementMapping.unp_end +"<br>";
+                            }
+
+                            let fragment = {
+                              start: incr,
+                              end: incr,
+                              toolTip: "Residue " +incr +" (" +compObj._pdbSequence.charAt(incr) +")" +
+                                "<br><b>" +result +"</b><br>" +
+                                mappingResults[mapping][result].identifier +"<br>" +
+                                uniprotTooltip +
+                                "PDB range: " +elementMapping.start.residue_number +" - " +
+                                elementMapping.end.residue_number +" (Chain " +compObj._bestChainId +")"
+                            }
+                            
+                            mappingData[0].locations[0].fragments.push(fragment);
+                          }
+                        });
+                      });
+
+                      document.querySelector("#" +mapping +"-track").data = mappingData;
+
+                    });
+
+                  }
+
                 }
 
               });
