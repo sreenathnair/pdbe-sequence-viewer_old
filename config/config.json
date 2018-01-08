@@ -2,13 +2,15 @@
     "category": [
         {
             "mapping": [
-                "cath",
-                "pfam",
-                "uniprot",
-                "interpro",
-                "scop"
+                "CATH",
+                "Pfam",
+                "UniProt",
+                "InterPro",
+                "SCOP",
+                "GO",
+                "Ensembl"
             ],
-            "secondary_strcutures": [
+            "secondary_structures": [
                 "helix",
                 "strand"
             ]
@@ -28,9 +30,20 @@
     ],
     "service": {
         "molecule": ["entities","modifiedResidues","mutatedResidues"],
-        "cath": ["mappings","entities"]
+        "cath": ["mappings","entities"],
+        "uniprot": ["mappings","entities"],
+        "pfam": ["mappings","entities"],
+        "interprot": ["mappings","entities"],
+        "scop": ["mappings","entities"],
+        "ensembl": ["mappings","entities"]
     },
     "color_code": {
-        "molecule": "rgb(150, 150, 150)"
+        "molecule": "rgb(150, 150, 150)",
+        "mutated": "rgb(255, 121, 0)",
+        "modified": "rgb(255, 121, 0)",
+        "pfam": "rgb(141, 151, 195)",
+        "cath": "rgb(81, 164, 245)",
+        "uniprot": "rgb(162, 102, 147)",
+        "scop": "rgb(0, 115, 84)"
     }
 }
