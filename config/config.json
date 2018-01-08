@@ -1,0 +1,36 @@
+{
+    "category": [
+        {
+            "mapping": [
+                "cath",
+                "pfam",
+                "uniprot",
+                "interpro",
+                "scop"
+            ],
+            "secondary_strcutures": [
+                "helix",
+                "strand"
+            ]
+        }
+    ],
+    "component": [
+        "molecule",
+        "pfam",
+        "uniprot",
+        "chains",
+        "quality",
+        "helix",
+        "strand",
+        "turn",
+        "cath",
+        "scop"
+    ],
+    "service": {
+        "molecule": ["entities","modifiedResidues","mutatedResidues"],
+        "cath": ["mappings","entities"]
+    },
+    "color_code": {
+        "molecule": "rgb(150, 150, 150)"
+    }
+}
