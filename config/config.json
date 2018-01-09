@@ -10,11 +10,18 @@
                 "GO",
                 "Ensembl"
             ],
-            "secondary_structures": [
-                "helix",
-                "strand"
-            ]
-        }
+            "structural_features": {
+                "features": [
+                    "helix",
+                    "strand",
+                    "turn"
+                ],
+                "keys": {
+                    "helix": "helices",
+                    "strand": "strands"
+                }
+            }
+       }
     ],
     "component": [
         "molecule",
@@ -33,9 +40,12 @@
         "cath": ["mappings","entities"],
         "uniprot": ["mappings","entities"],
         "pfam": ["mappings","entities"],
-        "interprot": ["mappings","entities"],
+        "interpro": ["mappings","entities"],
         "scop": ["mappings","entities"],
-        "ensembl": ["mappings","entities"]
+        "ensembl": ["mappings","entities"],
+        "helix": ["secStrutures"],
+        "strand": ["secStrutures"]
+
     },
     "color_code": {
         "molecule": "rgb(150, 150, 150)",
@@ -44,6 +54,9 @@
         "pfam": "rgb(141, 151, 195)",
         "cath": "rgb(81, 164, 245)",
         "uniprot": "rgb(162, 102, 147)",
-        "scop": "rgb(0, 115, 84)"
+        "scop": "rgb(0, 115, 84)",
+        "interpro": "rgb(81, 164, 245)",
+        "helix": "rgb(148, 131, 42)",
+        "strand": "rgb(132, 197, 240)"
     }
 }
