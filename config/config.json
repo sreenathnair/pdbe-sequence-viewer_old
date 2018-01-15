@@ -1,4 +1,122 @@
 {
+    "default_structure": [
+        {
+            "label": "Structural Domains",
+            "id": "structural_domain",
+            "type": "multi",
+            "summary": [],
+            "contents": [
+                {
+                    "label": "CATH",
+                    "id": "cath",
+                    "type": "single",
+                    "key": "CATH",
+                    "adapter": "DomainsAdapter",
+                    "resultMap": "mappings"
+                },
+                {
+                    "label": "SCOP",
+                    "id": "scop",
+                    "type": "single",
+                    "key": "SCOP",
+                    "adapter": "DomainsAdapter",
+                    "resultMap": "mappings"
+                }
+            ]
+        },
+        {
+            "label": "Sequence Domains",
+            "id": "sequence_domains",
+            "type": "multi",
+            "summary": [],
+            "contents": [
+                {
+                    "label": "UniProt",
+                    "id": "uniprot",
+                    "type": "single",
+                    "key": "UniProt",
+                    "adapter": "DomainsAdapter",
+                    "resultMap": "mappings"
+                },
+                {
+                    "label": "Pfam",
+                    "id": "pfam",
+                    "type": "single",
+                    "key": "Pfam",
+                    "adapter": "DomainsAdapter",
+                    "resultMap": "mappings"
+                }
+            ]
+        },
+        {
+            "label": "Structural Features",
+            "id": "structural_features",
+            "type": "multi",
+            "summary": ["helix","strand"],
+            "contents": [
+                {
+                    "label": "Helices",
+                    "id": "helix",
+                    "type":"single",
+                    "key": "helices",
+                    "adapter": "FeaturesAdapter",
+                    "resultMap": "secStrutures"
+                },
+                {
+                    "label": "Strands",
+                    "id": "strand",
+                    "type": "single",
+                    "key": "strands",
+                    "adapter": "FeaturesAdapter",
+                    "resultMap": "secStrutures"
+                }
+            ]
+        },
+        {
+            "label": "Quality",
+            "id": "quality",
+            "type": "multi",
+            "summary": [],
+            "adapter": "QualitySummaryAdapter",
+            "contents": [
+                {
+                    "label": "RSRZ",
+                    "id": "rsrz",
+                    "type": "single",
+                    "key": "RSRZ",
+                    "adapter": "QualityAdapter",
+                    "resultMap": "outliers"
+                },
+                {
+                    "label": "Ramachandran Outliers",
+                    "id": "rc_outliers",
+                    "type": "single",
+                    "key": "sidechain_outliers",
+                    "adapter": "QualityAdapter",
+                    "resultMap": "outliers"
+                },
+                {
+                    "label": "Sidechain Outliers",
+                    "id": "sidechain_outliers",
+                    "type": "single",
+                    "key": "ramachandran_outliers",
+                    "adapter": "QualityAdapter",
+                    "resultMap": "outliers"
+                },
+                {
+                    "label": "Clashes",
+                    "id": "clashes",
+                    "type": "single",
+                    "key": "clashes",
+                    "adapter": "QualityAdapter",
+                    "resultMap": "outliers"
+                }
+            ]
+        }
+    ],
+    "data-mapping": {
+
+    },
     "category": [
         {
             "mapping": [
@@ -33,7 +151,8 @@
         "strand",
         "turn",
         "cath",
-        "scop"
+        "scop",
+        "quality"
     ],
     "service": {
         "molecule": ["entities","modifiedResidues","mutatedResidues"],
@@ -44,8 +163,8 @@
         "scop": ["mappings","entities"],
         "ensembl": ["mappings","entities"],
         "helix": ["secStrutures"],
-        "strand": ["secStrutures"]
-
+        "strand": ["secStrutures"],
+        "quality": ["outliers"]
     },
     "color_code": {
         "molecule": "rgb(150, 150, 150)",
@@ -57,6 +176,10 @@
         "scop": "rgb(0, 115, 84)",
         "interpro": "rgb(81, 164, 245)",
         "helix": "rgb(148, 131, 42)",
-        "strand": "rgb(132, 197, 240)"
+        "strand": "rgb(132, 197, 240)",
+        "quality-0": "rgb(0, 182, 0)",
+        "quality-1": "rgb(255, 255, 75)",
+        "quality-2": "rgb(255, 121, 0)",
+        "quality-3": "rgb(255, 0, 0)"
     }
 }
