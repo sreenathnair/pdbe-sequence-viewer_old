@@ -8,60 +8,80 @@ class DomainsAdapter {
         this._config = config;
         this._result = result;
 
-        console.log("Init Domains Adapter", component.label);
     }
 
     getData() {
 
-        let data = [{
-            accession: this._component.id,
-            locations: [{
-                fragments: []
-            }],
-            color: this._config["color_code"][this._component.id],
-            present: false
-        }];
+
+        let data = [];
 
         let result = this._result[this._component.key];
 
-        Object.keys(this._result[this._component.key]).forEach(domain => {
+        Object.keys(result).forEach(domain => {
 
+            //console.log(result[domain])
 
-            result[domain].mappings.filter(x => x.chain_id === this._compObj._bestChainId)
-                .forEach(map => {
+            let filtered = result[domain].mappings.filter(x => x.chain_id === this._compObj._bestChainId);
 
-                    for (let incr = map.start.residue_number; incr <= map.end.residue_number; incr++) {
-                        
+            if (filtered.length != 0) {
+
+                //console.log('yes')
+                let feature = {
+                    accession: result[domain].identifier,
+                    locations: [{
+                        fragments: []
+                    }],
+                    color: this._config["color_code"][this._component.id],
+                    present: true,
+                    //start: 0, uncomment for text label
+                    //end: 0 uncomment for text label
+
+                }
+
+                filtered.forEach(dom => {
+
+                    //feature.start = dom.start.residue_number; uncomment for text label
+                    //feature.end = dom.end.residue_number; uncomment for text label
+
+                    for (let incr = dom.start.residue_number; incr <= dom.end.residue_number; incr++) {
+
                         let uniprotTooltip = "";
 
                         // add UniProt details to tool tip if applicable
 
                         if (this._component.id === 'uniprot') {
-                            uniprotTooltip = "UniProt range: " + map.unp_start + " - " + map.unp_end + "<br>";
+                            uniprotTooltip = "UniProt range: " + dom.unp_start + " - " + dom.unp_end + "<br>";
                         }
 
                         let fragment = {
                             start: incr,
                             end: incr,
-                            toolTip: "Residue " + incr + " (" + this._compObj._pdbSequence.charAt(incr) + ")" +
+                            toolTip: "Residue " + incr + " (" + this._compObj._pdbSequence.charAt(incr - 1) + ")" +
                                 "<br><b>" + domain + "</b><br>" +
                                 result[domain].identifier + "<br>" +
                                 uniprotTooltip +
-                                "PDB range: " + map.start.residue_number + " - " +
-                                map.end.residue_number + " (Chain " + map.chain_id + ")"
+                                "PDB range: " + dom.start.residue_number + " - " +
+                                dom.end.residue_number + " (Chain " + dom.chain_id + ")"
                         }
 
-                        data[0].locations[0].fragments.push(fragment);
-                        data[0].present = true;
-                    }
+                        //console.log('fragment', fragment);
 
+                        feature.locations[0].fragments.push(fragment);
+
+                    }
 
                 });
 
+                //filtered = filtered.reduce((x, y) => x.concat(y));
+                //console.log(domain, filtered)
+
+                data.push(feature);
+
+            }
 
 
         });
-        
+
         return data;
 
     }
