@@ -3,6 +3,7 @@ import DomainsAdapter from "./DomainsAdapter";
 import FeaturesAdapter from "./FeaturesAdapter";
 import QualityAdapter from "./QualityAdapter";
 import QualitySummaryAdapter from "./QualitySummaryAdapter";
+import BindingSitesAdapter from "./BindingSitesAdapter";
 
 import Utils from "./Utils";
 
@@ -159,7 +160,7 @@ class PDBeSequenceViewer extends HTMLElement {
 
             // painting components as per default configuration
             config["default_structure"].forEach(category => {
-              //console.log(category)
+              
 
               let categoryDiv = compObj.mainContent.append('div')
                 .attr('id', category.id + "-div");
@@ -193,12 +194,13 @@ class PDBeSequenceViewer extends HTMLElement {
                       combinedResult[compObj._pdbid][subcomponent.resultMap]["result"][compObj._pdbid]);
 
                     let data = respectiveClass.getData();
-
+                      
                     // paint component if data is present
                     if (data[0] != undefined && data[0].present) {
 
                       // keep the data in hash for other components to use instead of making a new call
                       compObj._componentDataHash[subcomponent.id] = data;
+                      
 
                       categoryTracksDiv.append('div')
                         .attr('id', subcomponent.id)
@@ -235,11 +237,10 @@ class PDBeSequenceViewer extends HTMLElement {
                 document.querySelector("#" + category.id + "-summary-track").data = summaryData;
 
               } else if (category.adapter != undefined && category.adapter != "") {
-                //console.log(category, " yes")
-
+                
                 let respectiveClass = compObj._utils.createClassByName(category.adapter, category, compObj, config);
 
-                let summaryData = respectiveClass.getData();
+                let summaryData = respectiveClass.getData(); 
 
                 document.querySelector("#" + category.id + "-summary-track").data = summaryData;
 
@@ -284,7 +285,7 @@ class PDBeSequenceViewer extends HTMLElement {
 
       });
 
-      console.log("Component Data Hash", this._componentDataHash);
+      //console.log("Component Data Hash", this._componentDataHash);
 
       // delaying to get the components painted after API calls
       setTimeout(this._utils.bindEvents, 4000);

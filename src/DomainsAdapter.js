@@ -43,32 +43,29 @@ class DomainsAdapter {
                     //feature.start = dom.start.residue_number; uncomment for text label
                     //feature.end = dom.end.residue_number; uncomment for text label
 
-                    for (let incr = dom.start.residue_number; incr <= dom.end.residue_number; incr++) {
+                    let uniprotTooltip = "";
 
-                        let uniprotTooltip = "";
+                    // add UniProt details to tool tip if applicable
 
-                        // add UniProt details to tool tip if applicable
-
-                        if (this._component.id === 'uniprot') {
-                            uniprotTooltip = "UniProt range: " + dom.unp_start + " - " + dom.unp_end + "<br>";
-                        }
-
-                        let fragment = {
-                            start: incr,
-                            end: incr,
-                            toolTip: "Residue " + incr + " (" + this._compObj._pdbSequence.charAt(incr - 1) + ")" +
-                                "<br><b>" + domain + "</b><br>" +
-                                result[domain].identifier + "<br>" +
-                                uniprotTooltip +
-                                "PDB range: " + dom.start.residue_number + " - " +
-                                dom.end.residue_number + " (Chain " + dom.chain_id + ")"
-                        }
-
-                        //console.log('fragment', fragment);
-
-                        feature.locations[0].fragments.push(fragment);
-
+                    if (this._component.id === 'uniprot') {
+                        uniprotTooltip = "UniProt range: " + dom.unp_start + " - " + dom.unp_end + "<br>";
                     }
+
+                    let fragment = {
+                        start: dom.start.residue_number,
+                        end: dom.end.residue_number,
+                        toolTip: "Residue {resNum}  ({charAtResNum})" +
+                            "<br><b>" + domain + "</b><br>" +
+                            result[domain].identifier + "<br>" +
+                            uniprotTooltip +
+                            "PDB range: " + dom.start.residue_number + " - " +
+                            dom.end.residue_number + " (Chain " + dom.chain_id + ")"
+                    }
+
+                    //console.log('fragment', fragment);
+
+                    feature.locations[0].fragments.push(fragment);
+
 
                 });
 
