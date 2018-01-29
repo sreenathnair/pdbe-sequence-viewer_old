@@ -163,7 +163,8 @@ class PDBeSequenceViewer extends HTMLElement {
               
 
               let categoryDiv = compObj.mainContent.append('div')
-                .attr('id', category.id + "-div");
+                .attr('id', category.id + "-div")
+                .attr('class', 'category-div');
 
               categoryDiv.append('div')
                 .attr('class', 'left category')
@@ -172,19 +173,22 @@ class PDBeSequenceViewer extends HTMLElement {
                   compObj._utils.toggle($(this));
                 });
 
-              categoryDiv.append('protvista-track')
-                .attr('id', category.id + "-summary-track")
-                .attr('class', 'right')
-                .attr('length', compObj._pdbSequenceLength)
-                .attr('displaystart', compObj._displaystart)
-                .attr('displayend', compObj._displayend);
+              let categorySummaryComponent = document.createElement('protvista-pdbe-track');
+              categorySummaryComponent.setAttribute('id', category.id + "-summary-track");
+              categorySummaryComponent.setAttribute('class', 'right');
+              categorySummaryComponent.setAttribute('length', compObj._pdbSequenceLength);
+              categorySummaryComponent.setAttribute('displaystart', compObj._displaystart);
+              categorySummaryComponent.setAttribute('displayend', compObj._displayend);
 
+              categoryDiv.node().append(categorySummaryComponent);
+              
               // paint sub components as applicable
               if (category.type === "multi") {
 
                 let categoryTracksDiv = categoryDiv.append('div')
                   .attr('id', category.id + "-tracks")
-                  .attr('style', 'display:none');
+                  //.attr('style', 'display:none');
+                  //.attr('visibility', 'hidden')
 
                 category.contents.forEach(subcomponent => {
 
@@ -206,13 +210,15 @@ class PDBeSequenceViewer extends HTMLElement {
                         .attr('id', subcomponent.id)
                         .attr('class', 'left category-header')
                         .text(subcomponent.label);
+                      
+                      let categoryTrackComponent = document.createElement('protvista-pdbe-track');
+                      categoryTrackComponent.setAttribute('id', subcomponent.id + "-track");
+                      categoryTrackComponent.setAttribute('class', 'right');
+                      categoryTrackComponent.setAttribute('length', compObj._pdbSequenceLength);
+                      categoryTrackComponent.setAttribute('displaystart', compObj._displaystart);
+                      categoryTrackComponent.setAttribute('displayend', compObj._displayend);
 
-                      categoryTracksDiv.append('protvista-track')
-                        .attr('id', subcomponent.id + "-track")
-                        .attr('class', 'right')
-                        .attr('length', compObj._pdbSequenceLength)
-                        .attr('displaystart', compObj._displaystart)
-                        .attr('displayend', compObj._displayend);
+                      categoryTracksDiv.node().append(categoryTrackComponent);
 
                       document.querySelector("#" + subcomponent.id + "-track").data = data;
 
@@ -256,20 +262,22 @@ class PDBeSequenceViewer extends HTMLElement {
             compObj.bottomSeqDiv.append('div')
               .attr('class', 'left');
 
-            compObj.bottomSeqDiv.append('protvista-sequence')
-              .attr('class', 'right')
-              .attr('id', 'bottom-sequence')
-              .attr('length', compObj._pdbSequenceLength)
-              .attr('displaystart', compObj._displaystart)
-              .attr('displayend', compObj._displayend);
+            let bottomSeqComponent = document.createElement('protvista-sequence');
+            bottomSeqComponent.setAttribute('class', 'right');
+            bottomSeqComponent.setAttribute('id', 'bottom-sequence');
+            bottomSeqComponent.setAttribute('length', compObj._pdbSequenceLength);
+            bottomSeqComponent.setAttribute('displaystart', compObj._displaystart);
+            bottomSeqComponent.setAttribute('displayend', compObj._displayend);
+
+            compObj.bottomSeqDiv.node().append(bottomSeqComponent);
 
             document.querySelector('#bottom-sequence').data = compObj._pdbSequence;
 
-            /*d3.selectAll('protvista-track')
+            /*d3.selectAll('protvista-pdbe-track')
               .append('data-loader')
               .attr('data-key', 'config')
                 .append('source')
-                .attr('src', 'https://cdn.jsdelivr.net/npm/protvista-track/dist/config.json');*/
+                .attr('src', 'https://cdn.jsdelivr.net/npm/protvista-pdbe-track/dist/config.json');*/
 
 
           },
@@ -288,7 +296,7 @@ class PDBeSequenceViewer extends HTMLElement {
       //console.log("Component Data Hash", this._componentDataHash);
 
       // delaying to get the components painted after API calls
-      setTimeout(this._utils.bindEvents, 4000);
+      //setTimeout(this._utils.bindEvents, 4000);
 
     });
   }
@@ -304,9 +312,18 @@ class PDBeSequenceViewer extends HTMLElement {
 
   paintBasicLayout(compObj) {
 
+    // this.managerContent = d3.select(this)
+    //   .append('protvista-manager')
+    //   .attr('attributes', 'length displaystart displayend highlighstart highlightend');
+
+    // this.mainContent = this.managerContent
+    //   .append('div')
+    //   .attr('class', 'main-content');
+
     this.mainContent = d3.select(this)
-      .append('div')
-      .attr('class', 'main-content');
+      .append('protvista-manager')
+      .attr('class', 'main-content')
+      .attr('attributes', 'length displaystart displayend highlighstart highlightend');
 
     this.navDiv = this.mainContent.append('div')
       .attr('id', 'nav-div');
@@ -331,12 +348,14 @@ class PDBeSequenceViewer extends HTMLElement {
     this.topSeqDiv.append('div')
       .attr('class', 'left');
 
-    this.topSeqDiv.append('protvista-sequence')
-      .attr('class', 'right')
-      .attr('id', 'top-sequence')
-      .attr('length', compObj._pdbSequenceLength)
-      .attr('displaystart', compObj._displaystart)
-      .attr('displayend', compObj._displayend);
+    this.topSeqElement = document.createElement('protvista-sequence');
+    this.topSeqElement.setAttribute('class', 'right');
+    this.topSeqElement.setAttribute('id', 'top-sequence')
+    this.topSeqElement.setAttribute('length', compObj._pdbSequenceLength)
+    this.topSeqElement.setAttribute('displaystart', compObj._displaystart)
+    this.topSeqElement.setAttribute('displayend', compObj._displayend);
+
+    this.topSeqDiv.node().append(this.topSeqElement);
 
     this.moleculeDiv = this.mainContent.append('div')
       .attr('id', 'molecule-div');
@@ -345,12 +364,15 @@ class PDBeSequenceViewer extends HTMLElement {
       .attr('class', 'left category')
       .text('Molecule');
 
-    this.moleculeDiv.append('protvista-track')
-      .attr('id', 'molecule-track')
-      .attr('class', 'right')
-      .attr('length', compObj._pdbSequenceLength)
-      .attr('displaystart', compObj._displaystart)
-      .attr('displayend', compObj._displayend);
+    this.moleculeElement = document.createElement('protvista-pdbe-track');
+    this.moleculeElement.setAttribute('id', 'molecule-track');
+    this.moleculeElement.setAttribute('class', 'right');
+    this.moleculeElement.setAttribute('length', compObj._pdbSequenceLength);
+    this.moleculeElement.setAttribute('displaystart', compObj._displaystart);
+    this.moleculeElement.setAttribute('displayend', compObj._displayend);
+
+    this.moleculeDiv.node().append(this.moleculeElement);
+      
 
   }
 
