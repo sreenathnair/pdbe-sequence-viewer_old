@@ -1,38 +1,189 @@
 {
-    "category": [
+    "default_structure": [
         {
-            "mapping": [
-                "cath",
-                "pfam",
-                "uniprot",
-                "interpro",
-                "scop"
-            ],
-            "secondary_structures": [
-                "helix",
-                "strand"
+            "label": "Structural Domains",
+            "id": "structural_domain",
+            "type": "multi",
+            "summary": [],
+            "contents": [
+                {
+                    "label": "CATH",
+                    "id": "cath",
+                    "type": "single",
+                    "key": "CATH",
+                    "adapter": "DomainsAdapter",
+                    "resultMap": "mappings"
+                },
+                {
+                    "label": "SCOP",
+                    "id": "scop",
+                    "type": "single",
+                    "key": "SCOP",
+                    "adapter": "DomainsAdapter",
+                    "resultMap": "mappings"
+                }
+            ]
+        },
+        {
+            "label": "Binding Sites",
+            "id": "binding_sites",
+            "type": "multi",
+            "summary": ["ligand_residues","site_residues"],
+            "contents": [
+                {
+                    "label": "Ligand",
+                    "id": "ligand",
+                    "type": "single",
+                    "key": "ligand_residues",
+                    "adapter": "BindingSitesAdapter",
+                    "resultMap": "bindingSites"
+                },
+                {
+                    "label": "Site Residues",
+                    "id": "site_residues",
+                    "type": "single",
+                    "key": "site_residues",
+                    "adapter": "BindingSitesAdapter",
+                    "resultMap": "bindingSites"
+                }
+            ]
+        },
+        {
+            "label": "Sequence Domains",
+            "id": "sequence_domains",
+            "type": "multi",
+            "summary": [],
+            "contents": [
+                {
+                    "label": "UniProt",
+                    "id": "uniprot",
+                    "type": "single",
+                    "key": "UniProt",
+                    "adapter": "DomainsAdapter",
+                    "resultMap": "mappings"
+                },
+                {
+                    "label": "Pfam",
+                    "id": "pfam",
+                    "type": "single",
+                    "key": "Pfam",
+                    "adapter": "DomainsAdapter",
+                    "resultMap": "mappings"
+                },
+                {
+                    "label": "Rfam",
+                    "id": "rfam",
+                    "type": "single",
+                    "key": "Rfam",
+                    "adapter": "DomainsAdapter",
+                    "resultMap": "rfam"
+                }
+            ]
+        },
+        {
+            "label": "Structural Features",
+            "id": "structural_features",
+            "type": "multi",
+            "summary": ["helix","strand"],
+            "contents": [
+                {
+                    "label": "Helices",
+                    "id": "helix",
+                    "type":"single",
+                    "key": "helices",
+                    "adapter": "FeaturesAdapter",
+                    "resultMap": "secStrutures"
+                },
+                {
+                    "label": "Strands",
+                    "id": "strand",
+                    "type": "single",
+                    "key": "strands",
+                    "adapter": "FeaturesAdapter",
+                    "resultMap": "secStrutures"
+                }
+            ]
+        },
+        {
+            "label": "Quality",
+            "id": "quality",
+            "type": "multi",
+            "summary": [],
+            "adapter": "QualitySummaryAdapter",
+            "contents": [
+                {
+                    "label": "RSRZ",
+                    "id": "rsrz",
+                    "type": "single",
+                    "key": "RSRZ",
+                    "adapter": "QualityAdapter",
+                    "resultMap": "outliers"
+                },
+                {
+                    "label": "Ramachandran Outliers",
+                    "id": "rc_outliers",
+                    "type": "single",
+                    "key": "ramachandran_outliers",
+                    "adapter": "QualityAdapter",
+                    "resultMap": "outliers"
+                },
+                {
+                    "label": "Sidechain Outliers",
+                    "id": "sidechain_outliers",
+                    "type": "single",
+                    "key": "sidechain_outliers",
+                    "adapter": "QualityAdapter",
+                    "resultMap": "outliers"
+                },
+                {
+                    "label": "Clashes",
+                    "id": "clashes",
+                    "type": "single",
+                    "key": "clashes",
+                    "adapter": "QualityAdapter",
+                    "resultMap": "outliers"
+                }
             ]
         }
     ],
-    "component": [
-        "molecule",
-        "pfam",
-        "uniprot",
-        "chains",
-        "quality",
-        "helix",
-        "strand",
-        "turn",
-        "cath",
-        "scop"
-    ],
+    "data-mapping": {
+
+    },
     "service": {
         "molecule": ["entities","modifiedResidues","mutatedResidues"],
-        "cath": ["mappings","entities"]
+        "cath": ["mappings","entities"],
+        "uniprot": ["mappings","entities"],
+        "pfam": ["mappings","entities"],
+        "interpro": ["mappings","entities"],
+        "scop": ["mappings","entities"],
+        "ensembl": ["mappings","entities"],
+        "helix": ["secStrutures"],
+        "strand": ["secStrutures"],
+        "rsrz": ["outliers"],
+        "rc_outliers": ["outliers"],
+        "sidechain_outliers": ["outliers"],
+        "clashes": ["outliers"],
+        "site_residues": ["bindingSites"],
+        "ligand": ["bindingSites"],
+        "rfam": ["rfam"]
     },
     "color_code": {
         "molecule": "rgb(150, 150, 150)",
         "mutated": "rgb(255, 121, 0)",
-        "modified": "rgb(255, 121, 0)"
+        "modified": "rgb(255, 121, 0)",
+        "pfam": "rgb(141, 151, 195)",
+        "cath": "rgb(81, 164, 245)",
+        "uniprot": "rgb(162, 102, 147)",
+        "scop": "rgb(0, 115, 84)",
+        "interpro": "rgb(81, 164, 245)",
+        "helix": "rgb(148, 131, 42)",
+        "strand": "rgb(132, 197, 240)",
+        "quality-0": "rgb(0, 182, 0)",
+        "quality-1": "rgb(255, 255, 75)",
+        "quality-2": "rgb(255, 121, 0)",
+        "quality-3": "rgb(255, 0, 0)",
+        "ligand": "rgb(0, 94, 52)",
+        "site_residues": "rgb(0, 190, 0)",
+        "rfam": "rgb(190, 190, 30)"
     }
 }
