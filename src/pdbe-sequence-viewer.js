@@ -184,7 +184,7 @@ class PDBeSequenceViewer extends HTMLElement {
                 .on('click', function () {
                   compObj._utils.toggle($(this));
                 });
-
+              
               let categorySummaryComponent = document.createElement('protvista-pdbe-track');
               categorySummaryComponent.setAttribute('id', category.id + "-summary-track");
               categorySummaryComponent.setAttribute('class', 'right');
@@ -199,6 +199,7 @@ class PDBeSequenceViewer extends HTMLElement {
 
                 let categoryTracksDiv = categoryDiv.append('div')
                   .attr('id', category.id + "-tracks")
+                  .attr('style', 'position:absolute;left:-999em')
                   //.attr('style', 'display:none');
                   //.attr('visibility', 'hidden')
 
@@ -229,6 +230,7 @@ class PDBeSequenceViewer extends HTMLElement {
                       categoryTrackComponent.setAttribute('length', compObj._pdbSequenceLength);
                       categoryTrackComponent.setAttribute('displaystart', compObj._displaystart);
                       categoryTrackComponent.setAttribute('displayend', compObj._displayend);
+                      categoryTrackComponent.setAttribute('layout', 'non-overlapping');
 
                       categoryTracksDiv.node().append(categoryTrackComponent);
 

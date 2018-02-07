@@ -84,7 +84,7 @@ class DomainsAdapter {
 
 
         });
-
+        
         return data;
 
     }
