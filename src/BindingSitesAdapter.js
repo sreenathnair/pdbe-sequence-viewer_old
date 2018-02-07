@@ -11,6 +11,10 @@ class BindingSitesAdapter {
     }
 
     getData() {
+        
+        if(this._result != undefined && this._result.length == 0) {
+            return [];
+        }
 
         let present = false;
         let data = [{

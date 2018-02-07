@@ -47,10 +47,12 @@ class Utils {
 
         var tracksContainer = obj.parent().children().last();
         var summaryContainer = obj.parent().children().first().next();
-
-        if ("none" === tracksContainer.css("display")) {
+        
+        if ("none" === tracksContainer.css("display") || "block" === tracksContainer.css("display")) {
             tracksContainer.css("display", "inline-block");
             summaryContainer.css("display", "none");
+            tracksContainer.css("position", "")
+            tracksContainer.css("left", "")
         } else {
             tracksContainer.css("display", "none");
             summaryContainer.css("display", "inline-block");

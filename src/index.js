@@ -13,3 +13,4 @@ if (window.customElements) {
 }
 
 export default PDBeSequenceViewer;
+

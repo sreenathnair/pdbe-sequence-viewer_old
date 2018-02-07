@@ -15,6 +15,10 @@ class QualityAdapter {
 
         let qualityTracks = [];
 
+        if(this._result == undefined) {
+            return  qualityTracks;
+        }
+
         let result = this._result["molecules"];
 
         let outlierDataHash = {};

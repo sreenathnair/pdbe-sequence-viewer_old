@@ -4,6 +4,7 @@ import FeaturesAdapter from "./FeaturesAdapter";
 import QualityAdapter from "./QualityAdapter";
 import QualitySummaryAdapter from "./QualitySummaryAdapter";
 import BindingSitesAdapter from "./BindingSitesAdapter";
+import DataService from "./DataService"
 
 import Utils from "./Utils";
 
@@ -12,7 +13,7 @@ class PDBeSequenceViewer extends HTMLElement {
 
   constructor() {
     super();
-    this._components = this.getAttribute("components");
+    this._components = [];
     this._pdbid = this.getAttribute("pdbid");
     this._entityId = this.getAttribute("entityId");
     this._componentDataHash = {};
@@ -24,7 +25,7 @@ class PDBeSequenceViewer extends HTMLElement {
   connectedCallback() {
 
     console.log('Loaded PDB sequence viewer');
-    console.log("Required components => " + this._components);
+    //console.log("Required components => " + this._components);
     console.log("PDBID => " + this._pdbid);
 
     //reading configuration
@@ -34,6 +35,14 @@ class PDBeSequenceViewer extends HTMLElement {
       var dataService = new DataService();
       var compObj = this;
 
+      // getting list of components to paint from configuration
+      config["default_structure"].forEach(struct => {
+        struct["contents"].forEach(content => {
+          this._components.push(content["id"])
+        })
+      });
+
+      console.log(this._components)
       // api to get outlier ratio to get best chain id
       var ratioPromiseList = dataService.createPromise([this._pdbid], ['observedResidueRatio']);
 
@@ -57,11 +66,14 @@ class PDBeSequenceViewer extends HTMLElement {
           var apiList = [];
           var componentHash = {};
 
-          compObj._components.split(',').forEach(component => {
+          compObj._components.forEach(component => {
             let tempList = config['service'][component];
             apiList.push(tempList);
             componentHash[component] = '';
           });
+
+          // also push apiList for molecule component which should be default
+          apiList.push(config['service']['molecule'])
 
           // flattening promise list
           apiList = compObj._utils.flattenArray(apiList);
@@ -172,7 +184,7 @@ class PDBeSequenceViewer extends HTMLElement {
                 .on('click', function () {
                   compObj._utils.toggle($(this));
                 });
-
+              
               let categorySummaryComponent = document.createElement('protvista-pdbe-track');
               categorySummaryComponent.setAttribute('id', category.id + "-summary-track");
               categorySummaryComponent.setAttribute('class', 'right');
@@ -187,6 +199,7 @@ class PDBeSequenceViewer extends HTMLElement {
 
                 let categoryTracksDiv = categoryDiv.append('div')
                   .attr('id', category.id + "-tracks")
+                  .attr('style', 'position:absolute;left:-999em')
                   //.attr('style', 'display:none');
                   //.attr('visibility', 'hidden')
 
@@ -198,7 +211,7 @@ class PDBeSequenceViewer extends HTMLElement {
                       combinedResult[compObj._pdbid][subcomponent.resultMap]["result"][compObj._pdbid]);
 
                     let data = respectiveClass.getData();
-                      
+                    
                     // paint component if data is present
                     if (data[0] != undefined && data[0].present) {
 
@@ -217,6 +230,7 @@ class PDBeSequenceViewer extends HTMLElement {
                       categoryTrackComponent.setAttribute('length', compObj._pdbSequenceLength);
                       categoryTrackComponent.setAttribute('displaystart', compObj._displaystart);
                       categoryTrackComponent.setAttribute('displayend', compObj._displayend);
+                      categoryTrackComponent.setAttribute('layout', 'non-overlapping');
 
                       categoryTracksDiv.node().append(categoryTrackComponent);
 

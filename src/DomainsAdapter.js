@@ -15,14 +15,20 @@ class DomainsAdapter {
 
         let data = [];
 
+        if(this._result == undefined) {
+            return data;
+        }
+
         let result = this._result[this._component.key];
+
+        
 
         Object.keys(result).forEach(domain => {
 
             //console.log(result[domain])
 
             let filtered = result[domain].mappings.filter(x => x.chain_id === this._compObj._bestChainId);
-
+            
             if (filtered.length != 0) {
 
                 //console.log('yes')
@@ -78,7 +84,7 @@ class DomainsAdapter {
 
 
         });
-
+        
         return data;
 
     }

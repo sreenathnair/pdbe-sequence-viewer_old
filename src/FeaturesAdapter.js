@@ -12,6 +12,10 @@ class FeaturesAdapter {
 
     getData() {
 
+        if(this._result == undefined) {
+            return [];
+        }
+
         let data = [{
             accession: this._component.id,
             locations: [{
