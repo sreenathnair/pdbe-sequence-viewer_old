@@ -69,6 +69,14 @@
                     "key": "Pfam",
                     "adapter": "DomainsAdapter",
                     "resultMap": "mappings"
+                },
+                {
+                    "label": "Rfam",
+                    "id": "rfam",
+                    "type": "single",
+                    "key": "Rfam",
+                    "adapter": "DomainsAdapter",
+                    "resultMap": "rfam"
                 }
             ]
         },
@@ -141,43 +149,6 @@
     "data-mapping": {
 
     },
-    "category": [
-        {
-            "mapping": [
-                "CATH",
-                "Pfam",
-                "UniProt",
-                "InterPro",
-                "SCOP",
-                "GO",
-                "Ensembl"
-            ],
-            "structural_features": {
-                "features": [
-                    "helix",
-                    "strand",
-                    "turn"
-                ],
-                "keys": {
-                    "helix": "helices",
-                    "strand": "strands"
-                }
-            }
-       }
-    ],
-    "component": [
-        "molecule",
-        "pfam",
-        "uniprot",
-        "chains",
-        "quality",
-        "helix",
-        "strand",
-        "turn",
-        "cath",
-        "scop",
-        "quality"
-    ],
     "service": {
         "molecule": ["entities","modifiedResidues","mutatedResidues"],
         "cath": ["mappings","entities"],
@@ -188,8 +159,13 @@
         "ensembl": ["mappings","entities"],
         "helix": ["secStrutures"],
         "strand": ["secStrutures"],
-        "quality": ["outliers"],
-        "bindingsites": ["bindingSites"]
+        "rsrz": ["outliers"],
+        "rc_outliers": ["outliers"],
+        "sidechain_outliers": ["outliers"],
+        "clashes": ["outliers"],
+        "site_residues": ["bindingSites"],
+        "ligand": ["bindingSites"],
+        "rfam": ["rfam"]
     },
     "color_code": {
         "molecule": "rgb(150, 150, 150)",
@@ -207,6 +183,7 @@
         "quality-2": "rgb(255, 121, 0)",
         "quality-3": "rgb(255, 0, 0)",
         "ligand": "rgb(0, 94, 52)",
-        "site_residues": "rgb(0, 190, 0)"
+        "site_residues": "rgb(0, 190, 0)",
+        "rfam": "rgb(190, 190, 30)"
     }
 }
