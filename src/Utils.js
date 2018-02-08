@@ -50,12 +50,14 @@ class Utils {
         
         if ("none" === tracksContainer.css("display") || "block" === tracksContainer.css("display")) {
             tracksContainer.css("display", "inline-block");
-            summaryContainer.css("display", "none");
+            //summaryContainer.css("display", "none");
+            summaryContainer.css("visibility", "hidden")
             tracksContainer.css("position", "")
             tracksContainer.css("left", "")
         } else {
             tracksContainer.css("display", "none");
-            summaryContainer.css("display", "inline-block");
+            //summaryContainer.css("display", "inline-block");
+            summaryContainer.css("visibility", "")
         }
     }
 

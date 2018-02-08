@@ -230,7 +230,11 @@ class PDBeSequenceViewer extends HTMLElement {
                       categoryTrackComponent.setAttribute('length', compObj._pdbSequenceLength);
                       categoryTrackComponent.setAttribute('displaystart', compObj._displaystart);
                       categoryTrackComponent.setAttribute('displayend', compObj._displayend);
-                      categoryTrackComponent.setAttribute('layout', 'non-overlapping');
+
+                      // when segments overlaps
+                      if(subcomponent.overlap != undefined && subcomponent.overlap === 'false') {
+                        categoryTrackComponent.setAttribute('layout', 'non-overlapping');
+                      }
 
                       categoryTracksDiv.node().append(categoryTrackComponent);
 
