@@ -76,7 +76,8 @@
                     "type": "single",
                     "key": "Rfam",
                     "adapter": "DomainsAdapter",
-                    "resultMap": "rfam"
+                    "resultMap": "rfam",
+                    "overlap": "false"
                 }
             ]
         },
